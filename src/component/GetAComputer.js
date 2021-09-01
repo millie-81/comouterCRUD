@@ -1,32 +1,52 @@
 import React from "react";
 
 //get a computer
-class EditForm extends React.Component {
+class GetAComputer extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             idNumber: "",
-            data: []
+            data: [],
+            response:""
         }
     }
 
     handleInput = (event) => {
         this.setState({
             idNumber: event.target.value,
-            data: []
+            data: [],
+            response:""
         })
     }
 
     handleSearch = (idNumber) => {
         fetch("http://localhost:8080/api/v1/computers/" + idNumber, {
             method: "GET"
-        }).then(response => response.json()).then(response => {
+        }).then(response => {
+            if(!response.ok){
+                if(response.status == "400"){
+                    throw new Error("bad request")
+                }else{
+                    throw new Error("internal error")
+                }
+            }else{
+                return response.json()
+            }}).then(response =>{
             this.setState({
                 idNumber: "",
-                data: response.result
+                data: response.result,
+                response:""
+            })
+        }).catch((error) =>{
+            this.setState({
+                idNumber:this.state.idNumber,
+                data:this.state.data,
+                response:error.message
             })
         })
+
+
     }
 
 
@@ -38,6 +58,7 @@ class EditForm extends React.Component {
                     this.handleSearch(this.state.idNumber)
                 }
                 }>
+                    {this.state.response.length > 0 && <div className={"alert alert-danger"}>{this.state.response}</div> }
                     <label>id</label>
                     <input name="id" type={"text"} value={this.state.idNumber} onChange={this.handleInput}/>
                     <button type={"submit"}>search</button>
@@ -72,4 +93,4 @@ class EditForm extends React.Component {
 
 }
 
-export default EditForm;
+export default GetAComputer;

@@ -16,7 +16,8 @@ class CreateComputer extends React.Component{
                 label:"",
                 price:"",
                 type:"",
-            }
+            },
+            response:""
         }
 
     }
@@ -55,6 +56,13 @@ class CreateComputer extends React.Component{
             }).then(response =>{
                 alert("the computer has been created")
                 window.location.reload()
+            }).catch((error) =>{
+                console.log(error.message)
+                this.setState({
+                    ...this.state.formData,
+                    ...this.state.errors,
+                    response:error.message
+                })
             })
         } else {
             this.setState({
@@ -83,26 +91,31 @@ class CreateComputer extends React.Component{
         return(
             <div>
                 <form onSubmit={this.handleSubmit}>
+                    {this.state.response.length > 0 && <div className={"alert alert-danger"}>{this.state.response}</div> }
                     <div>
                         <label>status</label>
                         <input  type={"text"} name={"status"} value={this.state.formData.status} onChange={this.handleInput}/>
                         <div className={"text-danger"}>{this.state.errors.status}</div>
                     </div>
+                    <br />
                     <div>
                         <label>label</label>
                         <input type={"text"}  name={"label"} value={this.state.formData.label}  onChange={this.handleInput}/>
                         <div className={"text-danger"}>{this.state.errors.label}</div>
                     </div>
+                    <br />
                     <div>
                         <label>price</label>
-                        <input type={"text"} name={"price"} value={this.state.formData.price}  onChange={this.handleInput}/>
+                        <input type={"number"} name={"price"} value={this.state.formData.price}  onChange={this.handleInput}/>
                         <div className={"text-danger"}>{this.state.errors.price}</div>
                     </div>
+                    <br />
                     <div>
                         <label>type</label>
                         <input type={"text"} name={"type"} value={this.state.formData.type}  onChange={this.handleInput}/>
                         <div className={"text-danger"}>{this.state.errors.type}</div>
                     </div>
+                    <br />
                     <button type={"submit"}>submit</button>
                 </form>
             </div>
